@@ -4,7 +4,7 @@
 #![test_runner(the_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-use the_os::println;
+use the_os::{println, print};
 use core::panic::PanicInfo;
 
 #[no_mangle]
@@ -17,7 +17,10 @@ pub extern "C" fn _start() -> ! {
     test_main();
 
     println!("It did not crash");
-    loop {}
+    loop {
+        print!("-");
+        for _ in 0..10000 {}
+    }
 }
 
 #[cfg(not(test))]
