@@ -153,12 +153,12 @@ fn test_println_output() {
 }
 
 #[test_case]
-pub fn test_println_simple() {
+fn test_println_simple() {
     println!("test_println_simple output");
 }
 
 #[test_case]
-pub fn test_println_many() {
+fn test_println_many() {
     for _ in 0..200 {
         println!("test_println_many output");
     }

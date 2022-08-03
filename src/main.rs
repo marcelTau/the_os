@@ -4,9 +4,7 @@
 #![test_runner(the_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-mod serial;
-mod vga_buffer;
-
+use the_os::println;
 use core::panic::PanicInfo;
 
 #[no_mangle]
