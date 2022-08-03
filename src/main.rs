@@ -52,15 +52,25 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
 }
 
 #[cfg(test)]
-fn test_runner(tests: &[&dyn Fn()]) {
+fn test_runner(tests: &[&dyn Testable]) {
     serial_println!("Running {} tests", tests.len());
-    tests.iter().for_each(|test| test());
+    tests.iter().for_each(|test| test.run());
     exit_qemu(QemuExitCode::Success);
 }
 
-#[test_case]
-fn my_test() {
-    serial_print!("some assertion ... ");
-    assert_eq!(1, 2);
-    serial_println!("[ok]");
+pub trait Testable {
+    fn run(&self) -> ();
 }
+
+impl<T> Testable for T
+where
+    T: Fn(),
+{
+    fn run(&self) {
+        serial_print!("{}... \t", core::any::type_name::<T>());
+        self();
+        serial_println!("[ok]");
+    }
+}
+
+
