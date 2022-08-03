@@ -17,17 +17,18 @@ pub extern "C" fn _start() -> ! {
     test_main();
 
     println!("It did not crash");
-    loop {
-        print!("-");
-        for _ in 0..10000 {}
-    }
+    the_os::hlt_loop();
+    //loop {
+        //print!("-");
+        //for _ in 0..10000 {}
+    //}
 }
 
 #[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    the_os::hlt_loop();
 }
 
 #[cfg(test)]
