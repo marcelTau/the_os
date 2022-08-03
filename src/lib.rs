@@ -9,6 +9,7 @@ use core::panic::PanicInfo;
 pub mod interrupts;
 pub mod vga_buffer;
 pub mod serial;
+pub mod gdt;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u32)]
@@ -73,6 +74,7 @@ pub extern "C" fn _start() -> ! {
 
 
 pub fn init() {
+    gdt::init();
     interrupts::init_idt();
 }
 

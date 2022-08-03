@@ -21,7 +21,12 @@ test-args = [
 ]
 test-success-exit-code = 33 # (0x10 << 1) | 1
 test-timeout = 10 # seconds
+#run-args = ["-g"]
 
 [[test]]
 name = "should_panic"
+harness = false
+
+[[test]]
+name = "stack_overflow"
 harness = false
