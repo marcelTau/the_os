@@ -143,18 +143,6 @@ pub fn _print(args: fmt::Arguments) {
 }
 
 #[test_case]
-fn test_println_simple() {
-    println!("tset_println_simple output");
-}
-
-#[test_case]
-fn test_println_many() {
-    for _ in 0..200 {
-        println!("tset_println_many output");
-    }
-}
-
-#[test_case]
 fn test_println_output() {
     let s = "Some test string that fits on a single line";
     println!("{}", s);
@@ -163,3 +151,16 @@ fn test_println_output() {
         assert_eq!(char::from(screen_char.ascii_char), c);
     }
 }
+
+#[test_case]
+pub fn test_println_simple() {
+    println!("test_println_simple output");
+}
+
+#[test_case]
+pub fn test_println_many() {
+    for _ in 0..200 {
+        println!("test_println_many output");
+    }
+}
+
