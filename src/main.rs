@@ -9,7 +9,14 @@ use core::panic::PanicInfo;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println!("Hello W{}rld{}", "o", "!!!");
+    println!("Hello World{}", "!!!");
+
+    the_os::init();
+
+    x86_64::instructions::interrupts::int3();
+
+    println!("It did not crash");
+
     #[cfg(test)]
     test_main();
     loop {}
