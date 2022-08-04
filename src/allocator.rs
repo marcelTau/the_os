@@ -11,9 +11,11 @@ use x86_64::{
 
 use bump::BumpAllocator;
 use linked_list::LinkedListAllocator;
+use fixed_size_block::FixedSizeBlockAllocator;
 
 pub mod bump;
 pub mod linked_list;
+pub mod fixed_size_block;
 
 pub struct Locked<A> {
     inner: spin::Mutex<A>,
@@ -42,7 +44,10 @@ fn align_up(addr: usize, align: usize) -> usize {
 }
 
 #[global_allocator]
-static ALLOCATOR: Locked<LinkedListAllocator> = Locked::new(LinkedListAllocator::new());
+static ALLOCATOR: Locked<FixedSizeBlockAllocator> = Locked::new(FixedSizeBlockAllocator::new());
+
+//#[global_allocator]
+//static ALLOCATOR: Locked<LinkedListAllocator> = Locked::new(LinkedListAllocator::new());
 
 //#[global_allocator]
 //static ALLOCATOR: Locked<BumpAllocator> = Locked::new(BumpAllocator::new());
