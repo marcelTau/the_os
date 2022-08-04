@@ -29,6 +29,8 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     let x = Box::new(42);
 
+    println!("This is a pointer on the heap: {x:p}");
+
     println!("It did not crash again");
 
     let page: Page = Page::containing_address(VirtAddr::new(0xb8000));
