@@ -6,10 +6,14 @@
 
 use core::panic::PanicInfo;
 
+#[cfg(test)]
+use bootloader::{entry_point, BootInfo};
+
 pub mod interrupts;
 pub mod vga_buffer;
 pub mod serial;
 pub mod gdt;
+pub mod memory;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u32)]
@@ -65,8 +69,10 @@ fn panic(info: &PanicInfo) -> ! {
 }
 
 #[cfg(test)]
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
+entry_point!(test_kernel_start);
+
+#[cfg(test)]
+fn test_kernel_start(_: &'static BootInfo) -> ! {
     init();
     test_main();
     hlt_loop();
