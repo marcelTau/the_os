@@ -4,7 +4,7 @@
 #![test_runner(the_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-use the_os::{println, print};
+use the_os::println;
 use core::panic::PanicInfo;
 
 #[no_mangle]
@@ -13,15 +13,16 @@ pub extern "C" fn _start() -> ! {
 
     the_os::init();
 
+    use x86_64::registers::control::Cr3;
+
+    let (level_4_page_table, _) = Cr3::read();
+    println!("Level 4 page table at: {:?}", level_4_page_table.start_address());
+
     #[cfg(test)]
     test_main();
 
     println!("It did not crash");
     the_os::hlt_loop();
-    //loop {
-        //print!("-");
-        //for _ in 0..10000 {}
-    //}
 }
 
 #[cfg(not(test))]
