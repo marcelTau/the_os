@@ -1,11 +1,17 @@
-use x86_64::{structures::paging::PageTable, VirtAddr, PhysAddr};
+use x86_64::{structures::paging::{OffsetPageTable, PageTable}, VirtAddr, PhysAddr};
+
+pub unsafe fn init(physical_memory_offset: VirtAddr) -> OffsetPageTable<'static> {
+    let l4_table = active_level_4_table(physical_memory_offset);
+    OffsetPageTable::new(l4_table, physical_memory_offset)
+}
+
 
 /// This function is unsafe since the caller must guarantee that the
 /// physical_memory_offset is valid.
 ///
 /// The function should only be called once because it is returning a
 /// `&mut` and those can not be aliased (UB)
-pub unsafe fn active_level_4_table(physical_memory_offset: VirtAddr)
+unsafe fn active_level_4_table(physical_memory_offset: VirtAddr)
     -> &'static mut PageTable 
 {
     use x86_64::registers::control::Cr3;
@@ -18,34 +24,35 @@ pub unsafe fn active_level_4_table(physical_memory_offset: VirtAddr)
     &mut *page_table_ptr
 }
 
-pub unsafe fn translate_addr(addr: VirtAddr, physical_memory_offset: VirtAddr)
-    -> Option<PhysAddr>
-{
-    translate_addr_inner(addr, physical_memory_offset)
-}
+// NOT USED ANYMORE
+//pub unsafe fn translate_addr(addr: VirtAddr, physical_memory_offset: VirtAddr)
+    //-> Option<PhysAddr>
+//{
+    //translate_addr_inner(addr, physical_memory_offset)
+//}
 
-fn translate_addr_inner(addr: VirtAddr, physical_memory_offset: VirtAddr) -> Option<PhysAddr> {
-    use x86_64::structures::paging::page_table::FrameError;
-    use x86_64::registers::control::Cr3;
+//fn translate_addr_inner(addr: VirtAddr, physical_memory_offset: VirtAddr) -> Option<PhysAddr> {
+    //use x86_64::structures::paging::page_table::FrameError;
+    //use x86_64::registers::control::Cr3;
 
-    let (l4_table_frame, _) = Cr3::read();
+    //let (l4_table_frame, _) = Cr3::read();
 
-    let table_indexes = [addr.p4_index(), addr.p3_index(), addr.p2_index(), addr.p1_index()];
+    //let table_indexes = [addr.p4_index(), addr.p3_index(), addr.p2_index(), addr.p1_index()];
 
-    let mut frame = l4_table_frame;
+    //let mut frame = l4_table_frame;
 
-    for &index in &table_indexes {
-        let virt = physical_memory_offset + frame.start_address().as_u64();
-        let table_ptr: *const PageTable = virt.as_ptr();
-        let table = unsafe { &*table_ptr };
+    //for &index in &table_indexes {
+        //let virt = physical_memory_offset + frame.start_address().as_u64();
+        //let table_ptr: *const PageTable = virt.as_ptr();
+        //let table = unsafe { &*table_ptr };
 
-        let entry = &table[index];
+        //let entry = &table[index];
 
-        frame = match entry.frame() {
-            Ok(frame) => frame,
-            Err(FrameError::FrameNotPresent) => return None,
-            Err(FrameError::HugeFrame) => panic!("huge pages not supported"),
-        };
-    }
-    Some(frame.start_address() + u64::from(addr.page_offset()))
-}
+        //frame = match entry.frame() {
+            //Ok(frame) => frame,
+            //Err(FrameError::FrameNotPresent) => return None,
+            //Err(FrameError::HugeFrame) => panic!("huge pages not supported"),
+        //};
+    //}
+    //Some(frame.start_address() + u64::from(addr.page_offset()))
+//}
