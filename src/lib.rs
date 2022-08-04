@@ -1,6 +1,6 @@
 #![no_std]
 #![cfg_attr(test, no_main)]
-#![feature(custom_test_frameworks, abi_x86_interrupt)]
+#![feature(custom_test_frameworks, abi_x86_interrupt, alloc_error_handler)]
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
@@ -14,6 +14,13 @@ pub mod vga_buffer;
 pub mod serial;
 pub mod gdt;
 pub mod memory;
+pub mod allocator;
+extern crate alloc;
+
+#[alloc_error_handler]
+fn alloc_error_handler(layout: alloc::alloc::Layout) -> ! {
+    panic!("allocation error: {:?}", layout);
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u32)]

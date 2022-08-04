@@ -5,11 +5,13 @@
 #![reexport_test_harness_main = "test_main"]
 
 use bootloader::{BootInfo, entry_point};
-use the_os::{println, memory};
+use the_os::{println, memory, allocator};
 use core::panic::PanicInfo;
 use x86_64::VirtAddr;
 use x86_64::structures::paging::Page;
+use alloc::boxed::Box;
 
+extern crate alloc;
 
 entry_point!(kernel_main);
 
@@ -22,6 +24,12 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     let mut frame_allocator = unsafe {
         memory::BootInfoFrameAllocator::init(&boot_info.memory_map)
     };
+
+    allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
+
+    let x = Box::new(42);
+
+    println!("It did not crash again");
 
     let page: Page = Page::containing_address(VirtAddr::new(0xb8000));
 
